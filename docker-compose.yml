@@ -1,0 +1,28 @@
+version: '2.2'
+
+services:
+  node:
+    build:
+      context: .
+      args:
+        - build_number_ci
+    command: npm run watch
+    environment:
+      APP_PORT: 17101
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_INVOICES_BUCKET: aaaa
+      MATCH_PONTO_ZOHO: ${MATCH_PONTO_ZOHO}
+      WORKER_ON: 1
+      LOG_LEVEL: debug
+      ZOHO_AUTHTOKEN: ${ZOHO_AUTHTOKEN}
+      PONTO_CLIENT_ID: ${PONTO_CLIENT_ID}
+      PONTO_CLIENT_SECRET: ${PONTO_CLIENT_SECRET}
+    ports:
+      - "19101:17101"
+    volumes:
+      - ./config:/var/www/config
+      - ./src:/var/www/src
+      - ./test:/var/www/test
+      - ./package.json:/var/www/package.json
+      - ./package-lock.json:/var/www/package-lock.json

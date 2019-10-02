@@ -1,0 +1,11 @@
+.DS_Store
+
+.env
+
+dist
+node_modules
+coverage
+
+config/*
+!config/default.js
+!config/test.js

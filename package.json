@@ -1,0 +1,60 @@
+{
+  "name": "ponto-to-zoho",
+  "version": "1.0.0",
+  "description": "Application to import bank transactions from Ponto to Zoho",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "watch": "nodemon --exec npm run start",
+    "test": "NODE_ENV=test NODE_PATH=$NODE_PATH:./src LOG_LEVEL=fatal node_modules/.bin/istanbul cover _mocha -- --exit --recursive ./test",
+    "lint": "semistandard --verbose 'src/**/*.js' 'test/**/*.js'",
+    "pretest": "npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satblip/ponto-to-zoho.git"
+  },
+  "author": "Louis Borsu (https://github.com/satblip)",
+  "bugs": {
+    "url": "https://github.com/satblip/ponto-to-zoho/issues"
+  },
+  "homepage": "https://github.com/satblip/ponto-to-zoho/src/master/README.md",
+  "devDependencies": {
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "istanbul": "1.1.0-alpha.1",
+    "mocha": "6.1.4",
+    "mocha-standard": "1.0.0",
+    "nock": "10.0.6",
+    "nodemon": "1.19.1",
+    "semistandard": "13.0.1"
+  },
+  "dependencies": {
+    "ajv": "6.10.0",
+    "aws-sdk": "2.540.0",
+    "barabara": "1.1.0",
+    "body-parser": "1.19.0",
+    "config": "3.1.0",
+    "express": "4.17.1",
+    "lodash": "4.17.14",
+    "moment": "2.24.0",
+    "request": "2.88.0",
+    "request-promise": "4.2.4",
+    "saga-logger": "2.0.3",
+    "saga-managed-error": "3.0.1",
+    "shortid": "2.2.14"
+  },
+  "semistandard": {
+    "globals": [
+      "describe",
+      "it",
+      "before",
+      "after",
+      "beforeEach",
+      "afterEach"
+    ]
+  }
+}
