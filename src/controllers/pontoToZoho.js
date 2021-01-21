@@ -5,14 +5,16 @@ const {
 
 const zohoBooks = require('../resources/zohoBooks');
 
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const log = require('saga-logger').create({
   module: module.id
 });
 
 module.exports.create = async params => {
-  const matchPontoToZoho = JSON.parse(process.env.MATCH_PONTO_ZOHO.replace(/'/g, '').replace(/\\/g, ''));
+  const matchPontoToZoho = JSON.parse(
+    process.env.MATCH_PONTO_ZOHO.replace(/'/g, '').replace(/\\/g, '')
+  );
 
   await asyncForEach(Object.keys(matchPontoToZoho), async (pontoAccount) => {
     const zohoAccount = matchPontoToZoho[pontoAccount];
@@ -26,7 +28,7 @@ module.exports.create = async params => {
     const transactionsDates = [];
 
     const zohoStatementImport = {
-      'account_id': zohoAccount,
+      account_id: zohoAccount,
       transactions: []
     };
 
@@ -39,31 +41,32 @@ module.exports.create = async params => {
 
       if (!existingZohoTransaction.banktransactions.length && !existingUncategorizedZohoTransaction.banktransactions.length) {
         let transactionType = null;
+
         if (transaction.attributes.amount > 0) {
-          transactionType = 'deposit';
+          transactionType = 'credit';
         } else {
           transactionType = 'credit';
         }
 
-        const valueDate = moment(transaction.attributes.valueDate);
+        const valueDate = moment(transaction.attributes.valueDate).tz('Europe/Brussels');
 
         transactionsDates.push(valueDate);
 
         const zohoTransactionToStatement = {
-          'date': valueDate.format('YYYY-MM-DD'),
-          'debit_or_credit': transactionType,
-          'amount': transaction.attributes.amount,
-          'payee': transaction.attributes.counterpartName,
-          'description': `${transaction.attributes.remittanceInformationType}: ${transaction.attributes.remittanceInformation}`,
-          'reference_number': transaction.id
+          date: valueDate.format('YYYY-MM-DD'),
+          debit_or_credit: transactionType,
+          amount: transaction.attributes.amount,
+          payee: transaction.attributes.counterpartName,
+          description: `${transaction.attributes.remittanceInformationType}: ${transaction.attributes.remittanceInformation}`,
+          reference_number: transaction.id
         };
 
         zohoStatementImport.transactions.push(zohoTransactionToStatement);
       }
     });
 
-    zohoStatementImport['start_date'] = moment.min(transactionsDates).format('YYYY-MM-DD');
-    zohoStatementImport['end_date'] = moment.max(transactionsDates).format('YYYY-MM-DD');
+    zohoStatementImport.start_date = moment.min(transactionsDates).format('YYYY-MM-DD');
+    zohoStatementImport.end_date = moment.max(transactionsDates).format('YYYY-MM-DD');
 
     if (zohoStatementImport.transactions.length) {
       await zohoBooks.createStatement(zohoStatementImport);

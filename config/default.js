@@ -11,7 +11,7 @@ module.exports = {
     invoicesBucket: process.env.AWS_INVOICES_BUCKET
   },
   ponto: {
-    transactionsLimit: 10,
+    transactionsLimit: 30,
     clientId: process.env.PONTO_CLIENT_ID,
     clientSecret: process.env.PONTO_CLIENT_SECRET
   },
@@ -21,6 +21,7 @@ module.exports = {
   },
   zoho: {
     authtoken: process.env.ZOHO_AUTHTOKEN,
-    invoiceTemplate: process.env.ZOHO_INVOICE_TEMPLATE
+    invoiceTemplate: process.env.ZOHO_INVOICE_TEMPLATE,
+    organisationId: process.env.ZOHO_ORGANISATION_ID
   }
 };

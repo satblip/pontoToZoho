@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const ManagedError = require('saga-managed-error');
 
-const { Barabara } = require('barabara');
+const { Barabara } = require('@webinmove/barabara');
 
 const log = require('saga-logger').create({
   module: module.id

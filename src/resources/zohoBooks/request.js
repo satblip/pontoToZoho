@@ -6,7 +6,8 @@ module.exports.zohoRequest = async (method, path, values = {}) => {
     method,
     uri: `https://books.zoho.com/api/v3/${path}`,
     qs: {
-      authtoken: config.zoho.authtoken
+      authtoken: config.zoho.authtoken,
+      organization_id: config.zoho.organisationId
     },
     headers: [],
     json: true
