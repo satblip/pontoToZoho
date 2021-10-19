@@ -20,7 +20,9 @@ module.exports = {
     processMessageThrottling: process.env.WORKER_PROCESS_MESSAGE_THROTTLING || h1
   },
   zoho: {
-    authtoken: process.env.ZOHO_AUTHTOKEN,
+    refreshToken: process.env.ZOHO_REFRESH_TOKEN,
+    clientId: process.env.ZOHO_CLIENT_ID,
+    clientSecret: process.env.ZOHO_CLIENT_SECRET,
     invoiceTemplate: process.env.ZOHO_INVOICE_TEMPLATE,
     organisationId: process.env.ZOHO_ORGANISATION_ID
   }

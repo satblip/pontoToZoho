@@ -1,4 +1,3 @@
-const BPromise = require('bluebird');
 const config = require('config');
 const AWS = require('aws-sdk');
 

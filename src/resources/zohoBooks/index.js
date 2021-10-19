@@ -1,9 +1,10 @@
 const {
-  zohoRequest
+  zohoRequest,
+  getAuthToken
 } = require('./request');
 
-module.exports.getTransactionsbyReferenceAndAccountId = async (referenceNumber, accountId, status) => {
-  return zohoRequest('GET', 'banktransactions', {
+module.exports.getTransactionsbyReferenceAndAccountId = async (accessToken, referenceNumber, accountId, status) => {
+  return zohoRequest(accessToken, 'GET', 'banktransactions', {
     searchTransaction: {
       referenceNumber,
       accountId,
@@ -12,6 +13,8 @@ module.exports.getTransactionsbyReferenceAndAccountId = async (referenceNumber, 
   });
 };
 
-module.exports.createStatement = async (statementImport) => {
-  return zohoRequest('POST', 'bankstatements', statementImport);
+module.exports.createStatement = async (accessToken, statementImport) => {
+  return zohoRequest(accessToken, 'POST', 'bankstatements', statementImport);
 };
+
+module.exports.getAuthToken = getAuthToken;

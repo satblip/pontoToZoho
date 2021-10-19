@@ -19,9 +19,14 @@ module.exports.create = async params => {
   await asyncForEach(Object.keys(matchPontoToZoho), async (pontoAccount) => {
     const zohoAccount = matchPontoToZoho[pontoAccount];
 
-    const synchronisation = await ponto.refreshAccount(pontoAccount);
-
-    await ponto.waitForSynchronisation(synchronisation.data.id);
+    try {
+      const synchronisation = await ponto.refreshAccount(pontoAccount);
+      await ponto.waitForSynchronisation(synchronisation.data.id);
+    } catch (error) {
+      if (!error.message.includes('accountRecentlySynchronized')) {
+        throw error;
+      };
+    }
 
     const transactions = await ponto.getTransactions(pontoAccount);
 
@@ -32,12 +37,14 @@ module.exports.create = async params => {
       transactions: []
     };
 
+    const authToken = await zohoBooks.getAuthToken();
+
     await asyncForEach(transactions.data, async (transaction) => {
       const existingZohoTransaction = await zohoBooks
-        .getTransactionsbyReferenceAndAccountId(transaction.id, zohoAccount);
+        .getTransactionsbyReferenceAndAccountId(authToken.access_token, transaction.id, zohoAccount);
 
       const existingUncategorizedZohoTransaction = await zohoBooks
-        .getTransactionsbyReferenceAndAccountId(transaction.id, zohoAccount, 'uncategorized');
+        .getTransactionsbyReferenceAndAccountId(authToken.access_token, transaction.id, zohoAccount, 'uncategorized');
 
       if (!existingZohoTransaction.banktransactions.length && !existingUncategorizedZohoTransaction.banktransactions.length) {
         let transactionType = null;
@@ -69,7 +76,7 @@ module.exports.create = async params => {
     zohoStatementImport.end_date = moment.max(transactionsDates).format('YYYY-MM-DD');
 
     if (zohoStatementImport.transactions.length) {
-      await zohoBooks.createStatement(zohoStatementImport);
+      await zohoBooks.createStatement(authToken.access_token, zohoStatementImport);
       log.debug('STATEMENT_CREATED', zohoStatementImport);
     }
   });

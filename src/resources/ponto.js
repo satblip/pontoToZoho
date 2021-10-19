@@ -3,14 +3,14 @@ const rp = require('request-promise');
 const config = require('config');
 
 const getAuthenticationToken = async () => {
-  const basicAuth = Buffer.from(`${config.ponto.clientId}:${config.ponto.clientSecret}`).toString('base64')
+  const basicAuth = Buffer.from(`${config.ponto.clientId}:${config.ponto.clientSecret}`).toString('base64');
   const requestOptions = {
     method: 'POST',
     body: 'grant_type=client_credentials',
-    uri: `https://api.myponto.com/oauth2/token`,
+    uri: 'https://api.myponto.com/oauth2/token',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Basic ${basicAuth}`
+      Authorization: `Basic ${basicAuth}`
     },
     json: true
   };
@@ -28,7 +28,7 @@ const pontoRequest = async (method, path, body) => {
     body,
     uri: `https://api.myponto.com/${path}`,
     headers: {
-      'Authorization': `Bearer ${accessToken}`
+      Authorization: `Bearer ${accessToken}`
     },
     json: true
   };
@@ -55,7 +55,7 @@ module.exports.refreshAccount = async (accountId) => {
       }
     }
   };
-  return pontoRequest('POST', `synchronizations`, body);
+  return pontoRequest('POST', 'synchronizations', body);
 };
 
 const sleep = (milliseconds) => {
@@ -67,7 +67,10 @@ const sleep = (milliseconds) => {
   }
 };
 const checkSynchronisationSucces = async (synchronisationId) => {
-  const synchronisation = await pontoRequest('GET', `synchronizations/${synchronisationId}`);
+  const synchronisation = await pontoRequest(
+    'GET',
+    `synchronizations/${synchronisationId}`
+  );
 
   if (synchronisation.data.attributes.status === 'success') {
     return true;
@@ -88,6 +91,8 @@ module.exports.waitForSynchronisation = async (synchronisationId) => {
 
 module.exports.getTransactions = async (accountId) => {
   const transactionsLimit = config.ponto.transactionsLimit;
-  return pontoRequest('GET', `accounts/${accountId}/transactions?limit=${transactionsLimit}`);
+  return pontoRequest(
+    'GET',
+    `accounts/${accountId}/transactions?limit=${transactionsLimit}`
+  );
 };
-

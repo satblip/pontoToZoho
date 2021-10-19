@@ -1,15 +1,34 @@
 const rp = require('request-promise');
 const config = require('config');
 
-module.exports.zohoRequest = async (method, path, values = {}) => {
+module.exports.getAuthToken = async () => {
+  return rp({
+    method: 'POST',
+    uri: 'https://accounts.zoho.com/oauth/v2/token',
+    qs: {
+      refresh_token: config.zoho.refreshToken,
+      client_id: config.zoho.clientId,
+      client_secret: config.zoho.clientSecret,
+      redirect_uri: 'http://localhost:19101/callback',
+      grant_type: 'refresh_token'
+    },
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    },
+    json: true
+  });
+};
+
+module.exports.zohoRequest = async (accessToken, method, path, values = {}) => {
   const requestOptions = {
     method,
     uri: `https://books.zoho.com/api/v3/${path}`,
     qs: {
-      authtoken: config.zoho.authtoken,
       organization_id: config.zoho.organisationId
     },
-    headers: [],
+    headers: {
+      Authorization: `Zoho-oauthtoken ${accessToken}`
+    },
     json: true
   };
 
