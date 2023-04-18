@@ -16,11 +16,24 @@ module.exports.create = async params => {
     process.env.MATCH_PONTO_ZOHO.replace(/'/g, '').replace(/\\/g, '')
   );
 
+  log.debug('STARTED', {
+    accounts: matchPontoToZoho
+  });
+
   await asyncForEach(Object.keys(matchPontoToZoho), async (pontoAccount) => {
     const zohoAccount = matchPontoToZoho[pontoAccount];
 
     try {
+      log.debug('REFRESH_ACCOUNT', {
+        zohoAccount: zohoAccount,
+        pontoAccount: pontoAccount
+      });
       const synchronisation = await ponto.refreshAccount(pontoAccount);
+
+      log.debug('SYNCHRONIZE_ACCOUNT', {
+        zohoAccount: zohoAccount,
+        pontoAccount: pontoAccount
+      });
       await ponto.waitForSynchronisation(synchronisation.data.id);
     } catch (error) {
       if (!error.message.includes('accountRecentlySynchronized')) {
@@ -28,6 +41,10 @@ module.exports.create = async params => {
       };
     }
 
+    log.debug('GET_TRANSACTIONS', {
+      zohoAccount: zohoAccount,
+      pontoAccount: pontoAccount
+    });
     const transactions = await ponto.getTransactions(pontoAccount);
 
     const transactionsDates = [];
